@@ -1,11 +1,12 @@
-package payement;
+package reservation;
 
 import java.sql.Date;
 
 import client.Client;
 import connection.BddObject;
+import connection.ForeignKey;
 import event.Evenement;
-import zone.Place;
+import place.Place;
 
 public class Reservation extends BddObject<Reservation> {
     
@@ -13,6 +14,7 @@ public class Reservation extends BddObject<Reservation> {
     String idReservation;
     Date date;
     Client client;
+    @ForeignKey(column = "idevenement", typeColumn = String.class)
     Evenement evenement;
     Place[] places;
 

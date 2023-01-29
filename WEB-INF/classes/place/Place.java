@@ -1,6 +1,8 @@
-package zone;
+package place;
 
 import connection.BddObject;
+import connection.ForeignKey;
+import zone.Zone;
 
 public class Place extends BddObject<Place> {
     
@@ -9,6 +11,7 @@ public class Place extends BddObject<Place> {
     String numero;
     boolean libre;
     boolean confirme;
+    @ForeignKey(column = "idzone", typeColumn = String.class)
     Zone zone;
 
 /// SETTERS

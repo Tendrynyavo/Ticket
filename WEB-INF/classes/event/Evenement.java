@@ -31,4 +31,12 @@ public class Evenement extends BddObject<Evenement> {
     public Zone[] getZones() {
         return zones;
     }
+
+/// CONSTRUCTORS
+    public Evenement() {
+        setTable("evenement");
+        setCountPK(7);
+        setPrefix("EVE");
+        setFunctionPK("nexval('seqEvenement')");
+    }
 }

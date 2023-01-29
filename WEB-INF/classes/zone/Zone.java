@@ -1,7 +1,9 @@
 package zone;
 
 import connection.BddObject;
+import connection.ForeignKey;
 import payement.Promotion;
+import place.Place;
 
 public class Zone extends BddObject<Zone> {
     
@@ -9,6 +11,7 @@ public class Zone extends BddObject<Zone> {
     String idZone;
     String nom;
     double prix;
+    @ForeignKey(column = "idpromotion", typeColumn = String.class)
     Promotion promotion;
     Place[] places;
 
@@ -43,7 +46,7 @@ public class Zone extends BddObject<Zone> {
     public Promotion getPromotion() {
         return promotion;
     }
-    public Place[] getPlace() {
-        return places;
-    }
+    // public Place[] getPlace() {
+    //     return places;
+    // }
 }

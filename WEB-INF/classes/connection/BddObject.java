@@ -65,7 +65,7 @@ public abstract class BddObject<T extends BddObject<?>> {
 /// Fonction pour prendre un connexion en PostgreSQL
     public static Connection getPostgreSQL() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/star?user=postgres&password=postgres");
+        Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5433/ticket?user=postgres&password=postgres");
         connection.setAutoCommit(false);
         return connection;
     }
