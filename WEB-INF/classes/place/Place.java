@@ -4,6 +4,7 @@ import java.sql.Connection;
 import connection.BddObject;
 import connection.ForeignKey;
 import event.Evenement;
+import reservation.Reservation;
 import zone.Zone;
 
 public class Place extends BddObject<Place> {
@@ -17,6 +18,8 @@ public class Place extends BddObject<Place> {
     Zone zone;
     @ForeignKey(column = "idEvenement", typeColumn = String.class)
     Evenement evenement;
+    @ForeignKey(column = "idReservation", typeColumn = String.class)
+    Reservation reservation;
 
 /// SETTERS
     public void setIdPlace(String idPlace) {
@@ -37,6 +40,9 @@ public class Place extends BddObject<Place> {
     public void setEvenement(Evenement evenement) {
         this.evenement = evenement;
     }
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+    }
 
 /// GETTERS
     public Evenement getEvenement() {
@@ -56,6 +62,9 @@ public class Place extends BddObject<Place> {
     }
     public Zone getZone() {
         return zone;
+    }
+    public Reservation getReservation() {
+        return reservation;
     }
 
 /// CONSTRUCTORS
@@ -82,6 +91,22 @@ public class Place extends BddObject<Place> {
         this.setLibre(false);
         this.setTable("placement");
         this.update(new String[] {"libre"}, new Boolean[] {false}, "idPlace='"+this.getIdPlace()+"' AND idEvenement='"+getEvenement().getIdEvenement()+"'", connection);
+        this.setTable(table);
+    }
+
+    public void confirme(Connection connection) throws Exception {
+        String table = getTable();
+        this.setConfirme(true);
+        this.setTable("placement");
+        this.update(new String[] {"confirme"}, new Boolean[] {true}, "idPlace='"+this.getIdPlace()+"' AND idEvenement='"+getEvenement().getIdEvenement()+"'", connection);
+        this.setTable(table);
+    }
+
+    public void annuler(Connection connection) throws Exception {
+        String table = getTable();
+        this.setConfirme(true);
+        this.setTable("placement");
+        this.update(new String[] {"libre"}, new Boolean[] {true}, "idPlace='"+this.getIdPlace()+"' AND idEvenement='"+getEvenement().getIdEvenement()+"'", connection);
         this.setTable(table);
     }
 }

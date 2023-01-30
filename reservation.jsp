@@ -6,6 +6,8 @@
 <%
     Client client = (Client) session.getAttribute("client");
     Evenement evenement = client.getEvenement();
+    evenement.charger();
+    client.check();
     String error = request.getParameter("error");
 %>
 <!DOCTYPE html>
@@ -26,7 +28,7 @@
                 <h1>Zone <%=zone.getNom() %></h1>
                 <% for (Place place : zone.getPlaces()) { %>
                 <div class="col-md-3">
-                    <h2 class="text-<% if (!place.isLibre()) { out.print("success"); } else if (place.isConfirme()) { out.print("danger"); } else { out.print("black-50"); }%>"><%=place.getNumero() %></h2>
+                    <h2 class="text-<% if (place.isConfirme()) { out.print("danger"); } else if (!place.isLibre()) { out.print("success"); } else { out.print("black-50"); }%>"><%=place.getNumero() %></h2>
                 </div>
                 <% } %>
             </div>
@@ -35,7 +37,6 @@
         <div class="container w-50 p-3 rounded-3 mt-5">
             <form action="reserver.jsp" method="get">
                 <input type="text" name="numeros" class="form-control" placeholder="Numeros">
-                <input type="text" name="date" class="form-control mt-3" placeholder="Date">
                 <% if (error != null) { %>
                 <h3 class="mt-3"><%=error %></h3>
                 <% } %>

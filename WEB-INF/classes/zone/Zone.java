@@ -49,7 +49,7 @@ public class Zone extends BddObject<Zone> {
         return nom;
     }
     public double getPrix() {
-        return prix;
+        return (getPromotion() == null) ? prix : getPromotion().getPourcentage() * prix;
     }
     public Promotion getPromotion() {
         return promotion;
@@ -94,6 +94,10 @@ public class Zone extends BddObject<Zone> {
         place.setTable("place_zone");
         place.setZone(this);
         place.setEvenement(getEvenement());
-        setPlaces(place.getData(getPostgreSQL(), "idPlace", "zone", "evenement"));
+        Place[] places = place.getData(getPostgreSQL(), "idPlace", "zone", "evenement");
+        for (int i = 0; i < places.length; i++) {
+            places[i].setZone(this);
+        }
+        setPlaces(places);
     }
 }

@@ -11,7 +11,6 @@ public class Payement extends BddObject<Payement> {
     @ForeignKey(column = "idReservation", typeColumn = String.class)
     Reservation reservation;
     double prix;
-    int quantite;
 
 /// SETTERS
     public void setIdPayement(String idPayement) {
@@ -24,10 +23,6 @@ public class Payement extends BddObject<Payement> {
         if (prix < 0) throw new Exception("Prix non valide");
         this.prix = prix;
     }
-    public void setQuantite(int quantite) throws Exception {
-        if (quantite < 0) throw new Exception("Quantite non valide");
-        this.quantite = quantite;
-    }
 
 /// GETTERS
     public String getIdPayement() {
@@ -39,7 +34,19 @@ public class Payement extends BddObject<Payement> {
     public double getPrix() {
         return prix;
     }
-    public int getQuantite() {
-        return quantite;
+
+/// CONSTRUCTORS
+    public Payement() {
+        setTable("payement");
+        setPrefix("PAY");
+        setCountPK(7);
+        setFunctionPK("nextval('seqpayement')");
+    }
+
+    public Payement(Reservation reservation, double prix) throws Exception {
+        this();
+        setIdPayement(buildPrimaryKey(getPostgreSQL()));
+        setReservation(reservation);
+        setPrix(prix);
     }
 }

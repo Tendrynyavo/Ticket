@@ -1,5 +1,6 @@
 package event;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class Evenement extends BddObject<Evenement> {
     String idEvenement;
     String nom;
     int nombre;
+    Timestamp date;
     Zone[] zones;
 
 /// SETTERS
@@ -28,11 +30,15 @@ public class Evenement extends BddObject<Evenement> {
     public void setZones(Zone[] zones) {
         this.zones = zones;
     }
-    public void setNombre(int nombre) {
+    public void setNombre(int nombre) throws Exception {
+        if (nombre < 0) throw new Exception("Nombre invalide");
         this.nombre = nombre;
     }
     public void setNombre(String nombre) throws Exception {
         setNombre(Integer.parseInt(nombre));
+    }
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
 /// GETTERS
@@ -48,6 +54,9 @@ public class Evenement extends BddObject<Evenement> {
     }
     public int getNombre() {
         return nombre;
+    }
+    public Timestamp getDate() {
+        return date;
     }
 
 /// CONSTRUCTORS
@@ -87,7 +96,11 @@ public class Evenement extends BddObject<Evenement> {
         Zone zone = new Zone();
         zone.setTable("zone_event");
         zone.setEvenement(this);
-        setZones(zone.getData(getPostgreSQL(), null, "evenement"));
+        Zone[] zones = zone.getData(getPostgreSQL(), null, "evenement");
+        for (int i = 0; i < zones.length; i++) {
+            zones[i].setEvenement(this);
+        }
+        setZones(zones);
     }
 
     public Place[] convertToPlace(String value) throws Exception {

@@ -1,5 +1,6 @@
 package client;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import connection.BddObject;
@@ -13,7 +14,7 @@ public class Client extends BddObject<Client> {
     String idClient;
     String nom;
     Evenement evenement;
-    ArrayList<Reservation> reservations = new ArrayList<>();
+    Reservation[] reservations;
 
 /// SETTERS
     public void setEvenement(Evenement evenement) {
@@ -28,7 +29,7 @@ public class Client extends BddObject<Client> {
         if (!nom.matches(nameRegex)) throw new Exception("Nom du Client invalide");
         this.nom = nom;
     }
-    public void setReservations(ArrayList<Reservation> reservations) {
+    public void setReservations(Reservation[] reservations) {
         this.reservations = reservations;
     }
 
@@ -42,7 +43,8 @@ public class Client extends BddObject<Client> {
     public String getNom() {
         return nom;
     }
-    public ArrayList<Reservation> getReservations() {
+    public Reservation[] getReservations() throws Exception {
+        if (reservations == null) chargerReservations();
         return reservations;
     }
 
@@ -71,9 +73,28 @@ public class Client extends BddObject<Client> {
         return client.getData(getPostgreSQL(), null, "idClient")[0];
     }
 
-    public void reserver(String numeros, String date) throws Exception {
+    public void reserver(String numeros) throws Exception {
         Place[] places = getEvenement().convertToPlace(numeros);
-        Reservation reservation = new Reservation(date, this, getEvenement(), places);
+        Reservation reservation = new Reservation(this, getEvenement(), places);
         reservation.insert();
+    }
+
+    public void chargerReservations() throws Exception {
+        Reservation reservation = new Reservation();
+        reservation.setTable("reservation_restant");
+        reservation.setClient(this);
+        Reservation[] reservations = reservation.getData(getPostgreSQL(), null, "client");
+        setReservations(reservations);
+    }
+
+    public void check() throws Exception {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        this.chargerReservations();
+        Reservation[] reservations = getReservations();
+        for (int i = 0; i < reservations.length; i++) {
+            if (reservations[i].getLimite().compareTo(timestamp) < 0) {
+                reservations[i].annuler();
+            }
+        }
     }
 }

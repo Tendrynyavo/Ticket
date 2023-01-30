@@ -3,7 +3,7 @@
 <%
     Client client = (Client) session.getAttribute("client");
     try {
-        client.reserver(request.getParameter("numeros"), request.getParameter("date"));
+        client.reserver(request.getParameter("numeros"));
         response.sendRedirect("reservation.jsp");
     } catch (Exception e) {
         response.sendRedirect("reservation.jsp?error=" + e.getMessage());
