@@ -2,6 +2,7 @@ package zone;
 
 import connection.BddObject;
 import connection.ForeignKey;
+import event.Evenement;
 import payement.Promotion;
 import place.Place;
 
@@ -11,7 +12,8 @@ public class Zone extends BddObject<Zone> {
     String idZone;
     String nom;
     double prix;
-    @ForeignKey(column = "idpromotion", typeColumn = String.class)
+    @ForeignKey(column = "idEvenement", typeColumn = String.class)
+    Evenement evenement;
     Promotion promotion;
     Place[] places;
 
@@ -26,11 +28,17 @@ public class Zone extends BddObject<Zone> {
         if (prix < 0) throw new Exception("Prix non invalide");
         this.prix = prix;
     }
+    public void setPrix(String prix) throws Exception {
+        setPrix(Double.parseDouble(prix));
+    }
     public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
     public void setPlaces(Place[] places) {
         this.places = places;
+    }
+    public void setEvenement(Evenement evenement) {
+        this.evenement = evenement;
     }
 
 /// GETTERS 
@@ -46,7 +54,46 @@ public class Zone extends BddObject<Zone> {
     public Promotion getPromotion() {
         return promotion;
     }
-    // public Place[] getPlace() {
-    //     return places;
-    // }
+    public Place[] getPlaces() throws Exception {
+        if (places == null) this.charger();
+        return places;
+    }
+    public Evenement getEvenement() {
+        return evenement;
+    }
+
+/// CONSTRUCTORS
+    public Zone() {
+        setTable("zone");
+        setCountPK(7);
+        setFunctionPK("nextval('seqzone')");
+        setPrefix("ZO");
+    }
+
+    public Zone(String nom, double prix) throws Exception {
+        this();
+        setIdZone(buildPrimaryKey(getPostgreSQL()));
+        setNom(nom);
+        setPrix(prix);
+    }
+
+    public Zone(String nom, String prix) throws Exception {
+        this();
+        setIdZone(buildPrimaryKey(getPostgreSQL()));
+        setNom(nom);
+        setPrix(prix);
+    }
+
+/// FUNCTIONS
+    public static Zone[] getAllZones() throws Exception {
+        return new Zone().getData(getPostgreSQL(), null);
+    }
+
+    public void charger() throws Exception {
+        Place place = new Place();
+        place.setTable("place_zone");
+        place.setZone(this);
+        place.setEvenement(getEvenement());
+        setPlaces(place.getData(getPostgreSQL(), "idPlace", "zone", "evenement"));
+    }
 }

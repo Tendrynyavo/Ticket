@@ -3,6 +3,8 @@ package client;
 import java.util.ArrayList;
 
 import connection.BddObject;
+import event.Evenement;
+import place.Place;
 import reservation.Reservation;
 
 public class Client extends BddObject<Client> {
@@ -10,9 +12,13 @@ public class Client extends BddObject<Client> {
 /// FIELD
     String idClient;
     String nom;
+    Evenement evenement;
     ArrayList<Reservation> reservations = new ArrayList<>();
 
 /// SETTERS
+    public void setEvenement(Evenement evenement) {
+        this.evenement = evenement;
+    }
     public void setIdClient(String idClient) {
         this.idClient = idClient;
     }
@@ -27,6 +33,9 @@ public class Client extends BddObject<Client> {
     }
 
 /// GETTERS
+    public Evenement getEvenement() {
+        return evenement;
+    }
     public String getIdClient() {
         return idClient;
     }
@@ -60,5 +69,11 @@ public class Client extends BddObject<Client> {
         Client client = new Client();
         client.setIdClient(id);
         return client.getData(getPostgreSQL(), null, "idClient")[0];
+    }
+
+    public void reserver(String numeros, String date) throws Exception {
+        Place[] places = getEvenement().convertToPlace(numeros);
+        Reservation reservation = new Reservation(date, this, getEvenement(), places);
+        reservation.insert();
     }
 }

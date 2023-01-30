@@ -3,6 +3,8 @@ package payement;
 import java.sql.Date;
 
 import connection.BddObject;
+import event.Evenement;
+import zone.Zone;
 
 public class Promotion extends BddObject<Promotion> {
 
@@ -11,8 +13,16 @@ public class Promotion extends BddObject<Promotion> {
     Date debut;
     Date fin;
     double pourcentage;
+    Zone zone;
+    Evenement evenement;
 
 /// SETTERS
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
+    public void setEvenement(Evenement evenement) {
+        this.evenement = evenement;
+    }
     public void setIdPromotion(String idPromotion) {
         this.idPromotion = idPromotion;
     }
@@ -28,6 +38,12 @@ public class Promotion extends BddObject<Promotion> {
     }
 
 /// GETTERS
+    public Zone getZone() {
+        return zone;
+    }
+    public Evenement getEvenement() {
+        return evenement;
+    }
     public String getIdPromotion() {
         return idPromotion;
     }

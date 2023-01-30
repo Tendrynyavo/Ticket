@@ -6,3 +6,5 @@ javac ./event/Evenement.java
 javac ./reservation/Reservation.java
 javac ./client/Client.java
 javac ./payement/Payement.java
+javac ./place/Placement.java
+javac ./reservation/PlaceReserve.java

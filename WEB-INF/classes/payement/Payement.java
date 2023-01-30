@@ -8,7 +8,7 @@ public class Payement extends BddObject<Payement> {
     
 /// FIELD
     String idPayement;
-    @ForeignKey(column = "idreservation", typeColumn = String.class)
+    @ForeignKey(column = "idReservation", typeColumn = String.class)
     Reservation reservation;
     double prix;
     int quantite;

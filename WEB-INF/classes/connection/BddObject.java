@@ -27,11 +27,11 @@ public abstract class BddObject<T extends BddObject<?>> {
 /// Getters
     public String getPrefix() { return prefix; }
     public String getTable() throws NullPointerException {
-        if (table == null) throw new NullPointerException("Pas de table pour l'object");
+        if (table == null) throw new NullPointerException("Pas de table pour l'object " + this.getTypeClass().getName());
         return table;
     }
     public String getFunctionPK() throws NullPointerException {
-        if (functionPK == null) throw new NullPointerException("Pas de fonction de sequence pour l'object");
+        if (functionPK == null) throw new NullPointerException("Pas de fonction de sequence pour l'object " + this.getTypeClass().getName());
         return functionPK;
     }
     public int getCountPK() { return countPK; }
@@ -183,7 +183,7 @@ public abstract class BddObject<T extends BddObject<?>> {
         for (int i = 0; i < column.length; i++)
             sql += column[i] + " = " + convertToLegal(value[i]) + ",\n";
         sql = sql.substring(0, sql.length() - 2);
-        sql += " WHERE " + ID + " = " + convertToLegal(this.getClass().getMethod("get" + toUpperCase(ID)).invoke(this));
+        sql += " WHERE " + ID;
         statement.executeUpdate(sql);
         statement.close();
         if (connect) {connection.commit(); connection.close();}

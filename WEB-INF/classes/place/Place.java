@@ -1,7 +1,9 @@
 package place;
 
+import java.sql.Connection;
 import connection.BddObject;
 import connection.ForeignKey;
+import event.Evenement;
 import zone.Zone;
 
 public class Place extends BddObject<Place> {
@@ -11,8 +13,10 @@ public class Place extends BddObject<Place> {
     String numero;
     boolean libre;
     boolean confirme;
-    @ForeignKey(column = "idzone", typeColumn = String.class)
+    @ForeignKey(column = "idZone", typeColumn = String.class)
     Zone zone;
+    @ForeignKey(column = "idEvenement", typeColumn = String.class)
+    Evenement evenement;
 
 /// SETTERS
     public void setIdPlace(String idPlace) {
@@ -30,8 +34,14 @@ public class Place extends BddObject<Place> {
     public void setZone(Zone zone) {
         this.zone = zone;
     }
+    public void setEvenement(Evenement evenement) {
+        this.evenement = evenement;
+    }
 
 /// GETTERS
+    public Evenement getEvenement() {
+        return evenement;
+    }
     public String getIdPlace() {
         return idPlace;
     }
@@ -46,5 +56,32 @@ public class Place extends BddObject<Place> {
     }
     public Zone getZone() {
         return zone;
+    }
+
+/// CONSTRUCTORS
+    public Place() {
+        setTable("place");
+        setCountPK(7);
+        setPrefix("PLA");
+        setFunctionPK("nextval('seqplace')");
+    }
+
+    public Place(String numero) throws Exception {
+        this();
+        setIdPlace(buildPrimaryKey(getPostgreSQL()));
+        setNumero(numero);
+    }
+
+/// FUNCTIONS
+    public static Place[] getAllPlaces() throws Exception {
+        return new Place().getData(getPostgreSQL(), null);
+    }
+
+    public void reserver(Connection connection) throws Exception {
+        String table = getTable();
+        this.setLibre(false);
+        this.setTable("placement");
+        this.update(new String[] {"libre"}, new Boolean[] {false}, "idPlace='"+this.getIdPlace()+"' AND idEvenement='"+getEvenement().getIdEvenement()+"'", connection);
+        this.setTable(table);
     }
 }

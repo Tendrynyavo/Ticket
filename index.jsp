@@ -1,7 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="client.Client" %>
+<%@ page import="event.Evenement" %>
 <%
-    Client[] clients = Client.getAllClients();
+    Client[] clients = null;
+    Evenement[] events = null;
+    try {
+        events = Evenement.getAllEvenements();
+        clients = Client.getAllClients();
+    } catch (Exception e) {
+        out.print(e.getMessage());
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,27 +22,25 @@
 </head>
 <body>
     <div class="container w-50 p-3 shadow rounded-3 mt-5">
-        <form action="session_client.jsp" method="get">
+        <form action="session.jsp" method="get">
             <div class="">
-                <select class="form-select" name="id">
-                    <option selected>Selectionner un client</option>
+                <select class="form-select" name="client">
                     <% for (Client client : clients) { %>
                     <option value="<%=client.getIdClient() %>"><%=client.getNom() %></option>
                     <% } %>
                 </select>
             </div>
             <div class="mt-4">    
-                <select class="form-select" name="id">
-                    <option selected>Selectionner un evenement</option>
-                    <% for (Client client : clients) { %>
-                    <option value="<%=client.getIdClient() %>"><%=client.getNom() %></option>
+                <select class="form-select" name="event">
+                    <% for (Evenement event : events) { %>
+                    <option value="<%=event.getIdEvenement() %>"><%=event.getNom() %></option>
                     <% } %>
                 </select>
             </div>
             <input type="submit" value="Ok" class="btn btn-outline-warning mt-3 px-5">
         </form>
-        <a href="formulaire.jsp?traitement=ajouter_client"><button class="btn btn-outline-warning mt-3 px-5">Nouveau client</button></a>
-        <a href="formulaire.jsp?traitement=ajouter_client"><button class="btn btn-outline-warning mt-3 px-5">Nouveau evenement</button></a>
+        <a href="formulaire.jsp?traitement=client"><button class="btn btn-outline-warning mt-3 px-5">Nouveau client</button></a>
+        <a href="formulaire_zone.jsp"><button class="btn btn-outline-warning mt-3 px-5">Back Office</button></a>
     </div>
 </body>
 </html>
