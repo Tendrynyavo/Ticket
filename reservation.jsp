@@ -28,7 +28,7 @@
                 <h1>Zone <%=zone.getNom() %></h1>
                 <% for (Place place : zone.getPlaces()) { %>
                 <div class="col-md-3">
-                    <h2 class="text-<% if (place.isConfirme()) { out.print("danger"); } else if (!place.isLibre()) { out.print("success"); } else { out.print("black-50"); }%>"><%=place.getNumero() %></h2>
+                    <h2 class="text-<%=place.getColor() %>"><%=place.getNumero() %></h2>
                 </div>
                 <% } %>
             </div>

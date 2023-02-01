@@ -66,6 +66,9 @@ public class Place extends BddObject<Place> {
     public Reservation getReservation() {
         return reservation;
     }
+    public String getColor() {
+        return (this.isConfirme()) ? "danger" : (!this.isLibre()) ? "success" : "black-50";
+    }
 
 /// CONSTRUCTORS
     public Place() {

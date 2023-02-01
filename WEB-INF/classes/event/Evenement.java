@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import connection.BddObject;
-import payement.Payement;
 import payement.Total;
 import place.Place;
 import zone.Zone;
@@ -183,7 +182,7 @@ public class Evenement extends BddObject<Evenement> {
         Total total = new Total();
         total.setTable("total");
         total.setEvenement(this);
-        Total[] totals = (Total[]) total.getData(getPostgreSQL(), null, "evenement");
+        Total[] totals = total.getData(getPostgreSQL(), null, "evenement");
         return (totals.length <= 0) ? 0 : totals[0].getTotal();
     }
 }
