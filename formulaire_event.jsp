@@ -8,6 +8,7 @@
         <form action="ajouter_event.jsp" method="get">
             <input type="text" name="nom" class="form-control" placeholder="Nom">
             <input type="text" name="nombre" class="form-control mt-3" placeholder="Nombre">
+            <input type="text" name="date" class="form-control mt-3" placeholder="Date">
             <input type="submit" value="Ok" class="btn btn-outline-warning mt-3 px-5">
             <% if (error != null) { %>
                 <h2><%=error %></h2>

@@ -10,8 +10,8 @@ INCREMENT BY 1;
 CREATE TABLE Evenement (
     idEvenement VARCHAR PRIMARY KEY,
     nom VARCHAR,
-    nombre INTEGER,
-    date TIMESTAMP
+    nombre INTEGER NOT NULL 0,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE SEQUENCE seqEvenement 
@@ -21,7 +21,7 @@ INCREMENT BY 1;
 CREATE TABLE Zone (
     idZone VARCHAR PRIMARY KEY,
     nom VARCHAR UNIQUE,
-    prix DOUBLE PRECISION
+    prix DOUBLE PRECISION NOT NULL DEFAULT 0
 );
 
 CREATE SEQUENCE seqZone
@@ -39,7 +39,7 @@ INCREMENT BY 1;
 
 CREATE TABLE placement (
     idEvenement VARCHAR REFERENCES Evenement (idEvenement),
-    idZone VARCHAR  REFERENCES zone (idzone),
+    idZone VARCHAR REFERENCES zone (idzone),
     idPlace VARCHAR REFERENCES place (idplace)
 );
 
@@ -77,8 +77,12 @@ INCREMENT BY 1;
 
 CREATE TABLE payement (
     idPayement VARCHAR PRIMARY KEY,
-    idReservation VARCHAR REFERENCES reservation (idReservation),
-    prix DOUBLE PRECISION NOT NULL DEFAULT 0
+    idClient VARCHAR REFERENCES client (idclient),
+    idEvenement VARCHAR REFERENCES Evenement (idEvenement),
+    idReservation VARCHAR REFERENCES reservation (idreservation),
+    somme DOUBLE PRECISION NOT NULL DEFAULT 0,
+    quantite INTEGER,
+    simple BOOLEAN
 );
 
 CREATE VIEW place_reserve AS
@@ -102,3 +106,22 @@ WHERE idReservation NOT IN (
 CREATE TABLE reservation_annule (
     idReservation VARCHAR REFERENCES reservation (idReservation),
 );
+
+CREATE TABLE promotion (
+    idPromotion VARCHAR PRIMARY KEY,
+    debut TIMESTAMP,
+    fin TIMESTAMP,
+    pourcentage DOUBLE PRECISION NOT NULL DEFAULT 0,
+    idZone VARCHAR REFERENCES zone (idzone),
+    idEvenement VARCHAR REFERENCES Evenement (idEvenement)
+);
+
+CREATE SEQUENCE seqPromotion
+START WITH 1
+INCREMENT BY 1;
+
+CREATE VIEW total AS
+SELECT idEvenement, SUM(quantite) as total
+FROM payement
+    WHERE simple = true
+GROUP BY idEvenement;

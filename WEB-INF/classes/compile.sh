@@ -1,3 +1,4 @@
+#!/bin/sh
 javac ./connection/BddObject.java
 javac ./payement/Promotion.java
 javac ./place/Place.java
@@ -9,4 +10,3 @@ javac ./payement/Payement.java
 javac ./place/Placement.java
 javac ./reservation/PlaceReserve.java
 javac ./reservation/Annulation.java
-javac ./billet/BilletSimple.java

@@ -6,8 +6,6 @@
 <%
     Client client = (Client) session.getAttribute("client");
     Evenement evenement = client.getEvenement();
-    evenement.charger();
-    client.check();
     String error = request.getParameter("error");
 %>
 <!DOCTYPE html>
@@ -22,21 +20,9 @@
 <body>
     <div class="container mt-4">
         <h1 class="text-center"><%=evenement.getNom() %></h1>
-        <div class="container row mt-5">
-            <% for (Zone zone : evenement.getZones()) { %>
-            <div class="col-md-3 shadow row mx-5 rounded-3 p-3">
-                <h1>Zone <%=zone.getNom() %></h1>
-                <% for (Place place : zone.getPlaces()) { %>
-                <div class="col-md-3">
-                    <h2 class="text-<% if (place.isConfirme()) { out.print("danger"); } else if (!place.isLibre()) { out.print("success"); } else { out.print("black-50"); }%>"><%=place.getNumero() %></h2>
-                </div>
-                <% } %>
-            </div>
-            <% } %>
-        </div>
         <div class="container w-50 p-3 rounded-3 mt-5">
-            <form action="reserver.jsp" method="get">
-                <input type="text" name="numeros" class="form-control" placeholder="Numeros">
+            <form action="ajouter_simple.jsp" method="get">
+                <input type="text" name="nombre" class="form-control" placeholder="Nombre">
                 <% if (error != null) { %>
                 <h3 class="mt-3"><%=error %></h3>
                 <% } %>
@@ -44,19 +30,20 @@
                     <input type="submit" value="Ok" class="btn btn-dark mt-3 px-5">
                 </div>
             </form>
+            <%
+                int difference = evenement.getDifference();
+            %>
+            <h3 class="mt-3">Il en reste <%=difference %> place<% if (difference > 1) out.print("s");  %></h3>
             <div class="row mt-4">
                 <div class="col-md-4">
                     <a href="liste_reservation.jsp"><button class="btn btn-dark mt-3 px-5">Liste des réservation</button></a>
                 </div>
                 <div class="col-md-4">
-                    <a href="reservation_simple.jsp"><button class="btn btn-dark mt-3 px-5">Réserver Billet Simple</button></a>
+                    <a href="reservation.jsp"><button class="btn btn-dark mt-3 px-5">Réserver Billet</button></a>
                 </div>
                 <div class="col-md-4">
                     <a href="liste_reservation.jsp"><button class="btn btn-dark mt-3 px-5">Liste de vos billets</button></a>
                 </div>
-            </div>
-            <div class="row">
-                <a href="index.jsp"><button class="btn btn-dark mt-3 px-5" style="margin-left: 215px;">Deconnecter</button></a>
             </div>
         </div>
     </div>

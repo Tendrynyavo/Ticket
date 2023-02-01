@@ -3,8 +3,9 @@ package event;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import connection.BddObject;
+import payement.Payement;
+import payement.Total;
 import place.Place;
 import zone.Zone;
 
@@ -15,23 +16,32 @@ public class Evenement extends BddObject<Evenement> {
     String nom;
     int nombre;
     Timestamp date;
+    double prix;
+    Total total;
     Zone[] zones;
 
 /// SETTERS
+    public void setTotal(Total total) {
+        this.total = total;
+    }
+    public void setPrix(double prix) throws IllegalArgumentException {
+        if (prix < 0) throw new IllegalArgumentException("Prix est invalide");
+        this.prix = prix;
+    }
     public void setIdEvenement(String idEvenement) {
         this.idEvenement = idEvenement;
     }
-    public void setNom(String nom) throws Exception {
+    public void setNom(String nom) throws IllegalArgumentException {
         // Regular expression to match valid names
         String nameRegex = "^[a-zA-Z\\s]*$";
-        if (!nom.matches(nameRegex)) throw new Exception("Nom de l'evenement invalide");
+        if (!nom.matches(nameRegex)) throw new IllegalArgumentException("Nom de l'evenement invalide");
         this.nom = nom;
     }
     public void setZones(Zone[] zones) {
         this.zones = zones;
     }
-    public void setNombre(int nombre) throws Exception {
-        if (nombre < 0) throw new Exception("Nombre invalide");
+    public void setNombre(int nombre) throws IllegalArgumentException {
+        if (nombre < 0) throw new IllegalArgumentException("Nombre invalide");
         this.nombre = nombre;
     }
     public void setNombre(String nombre) throws Exception {
@@ -42,6 +52,9 @@ public class Evenement extends BddObject<Evenement> {
     }
 
 /// GETTERS
+    public double getPrix() {
+        return prix;
+    }
     public String getIdEvenement() {
         return idEvenement;
     }
@@ -57,6 +70,9 @@ public class Evenement extends BddObject<Evenement> {
     }
     public Timestamp getDate() {
         return date;
+    }
+    public int getDifference() throws Exception {
+        return getNombre() - getPaymentTotal();
     }
 
 /// CONSTRUCTORS
@@ -74,11 +90,12 @@ public class Evenement extends BddObject<Evenement> {
         setNombre(nombre);
     }
     
-    public Evenement(String nom, String nombre) throws Exception {
+    public Evenement(String nom, String nombre,String date) throws Exception {
         this();
         setIdEvenement(buildPrimaryKey(getPostgreSQL()));
         setNom(nom);
         setNombre(nombre);
+        setDate(Timestamp.valueOf(date));
     }
 
 /// FUNCTION
@@ -160,5 +177,13 @@ public class Evenement extends BddObject<Evenement> {
         if (first < 0 || end < 0) throw new Exception("Cette intervalle " + numeros[0] + " vers " + numeros[1] + " n'est pas valable");
         list = list.subList(first, end + 1);
         return list.toArray(new String[list.size()]);
+    }
+
+    public int getPaymentTotal() throws Exception {
+        Total total = new Total();
+        total.setTable("total");
+        total.setEvenement(this);
+        Total[] totals = (Total[]) total.getData(getPostgreSQL(), null, "evenement");
+        return (totals.length <= 0) ? 0 : totals[0].getTotal();
     }
 }

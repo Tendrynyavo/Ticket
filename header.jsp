@@ -25,6 +25,9 @@
             <a class="nav-link text-white" href="placement.jsp">Placement</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link text-white" href="formulaire_promotion.jsp">Promotion</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link text-white" href="index.jsp">Retour</a>
         </li>
     </ul>

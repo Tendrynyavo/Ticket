@@ -66,6 +66,22 @@ public class Reservation extends BddObject<Reservation> {
     public Timestamp getLimite() {
         return limite;
     }
+    public String getPlacesString() throws Exception {
+        String value = "";
+        Place[] places = getPlaces();
+        for (int i = 0; i < places.length; i++) {
+            value += places[i].getNumero();
+            if (i != places.length - 1) value += ";";
+        }
+        return value;
+    }
+    public double getPrix() throws Exception {
+        double somme = 0;
+        for (Place place : getPlaces()) {
+            somme += place.getZone().getPrix();
+        }
+        return somme;
+    }
 
 /// CONSTRUCTORS
     public Reservation() throws Exception {
@@ -82,12 +98,24 @@ public class Reservation extends BddObject<Reservation> {
         setClient(client);
         setEvenement(evenement);
         setPlaces(places);
+        setLimite(getTime(30));
+    }
+
+    public Reservation(Client client, Evenement evenement) throws Exception {
+        this();
+        setIdReservation(buildPrimaryKey(getPostgreSQL()));
+        setDate(new Date(System.currentTimeMillis()));
+        setClient(client);
+        setEvenement(evenement);
+        setLimite(getTime(30));
+    }
+
+    public Timestamp getTime(int duree) throws Exception {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(timestamp);
-        calendar.add(Calendar.MINUTE, 30);
-        timestamp = new Timestamp(calendar.getTime().getTime());
-        setLimite(timestamp);
+        calendar.add(Calendar.MINUTE, duree);
+        return new Timestamp(calendar.getTime().getTime());
     }
 
     public void insert() throws Exception {
@@ -97,7 +125,7 @@ public class Reservation extends BddObject<Reservation> {
             this.insert(connection);
             for (Place place : places) {
                 place.reserver(connection);
-                new PlaceReserve(this, place).insert(connection);
+                new PlaceReserve(this, place, getEvenement()).insert(connection);
             }
             connection.commit();
         } catch (Exception e) {
@@ -112,12 +140,10 @@ public class Reservation extends BddObject<Reservation> {
         Connection connection = null;
         try {
             connection = BddObject.getPostgreSQL();
-            double prix = 0;
             for (Place place : getPlaces()) {
-                prix += place.getZone().getPrix();
                 place.confirme(connection);
             }
-            Payement payement = new Payement(this, prix);
+            Payement payement = new Payement(this, getClient(), getEvenement(), getPrix(), getPlaces().length, false);
             payement.insert(connection);
             connection.commit();
         } catch (Exception e) {
@@ -150,7 +176,12 @@ public class Reservation extends BddObject<Reservation> {
         Place place = new Place();
         place.setTable("place_reserve");
         place.setReservation(this);
-        setPlaces(place.getData(getPostgreSQL(), null, "reservation"));        
+        place.setEvenement(getEvenement());
+        Place[] places = place.getData(getPostgreSQL(), null, "reservation", "evenement");
+        for (Place p : places) {
+            p.getZone().setEvenement(getEvenement());
+        }
+        setPlaces(places);        
     }
 
     public static Reservation getReservationById(String id) throws Exception {

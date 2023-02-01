@@ -1,5 +1,7 @@
 package zone;
 
+import java.sql.Timestamp;
+
 import connection.BddObject;
 import connection.ForeignKey;
 import event.Evenement;
@@ -48,11 +50,11 @@ public class Zone extends BddObject<Zone> {
     public String getNom() {
         return nom;
     }
-    public double getPrix() {
-        return (getPromotion() == null) ? prix : getPromotion().getPourcentage() * prix;
+    public double getPrix() throws Exception {
+        return (getPromotion() == null) ? prix : prix - ((getPromotion().getPourcentage() / 100) * prix);
     }
-    public Promotion getPromotion() {
-        return promotion;
+    public Promotion getPromotion() throws Exception {
+        return findPromotion();
     }
     public Place[] getPlaces() throws Exception {
         if (places == null) this.charger();
@@ -99,5 +101,15 @@ public class Zone extends BddObject<Zone> {
             places[i].setZone(this);
         }
         setPlaces(places);
+    }
+
+    public Promotion findPromotion() throws Exception {
+        Promotion promotion = new Promotion();
+        promotion.setEvenement(getEvenement());
+        promotion.setZone(this);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        promotion.setTable(promotion.getTable()+" WHERE debut < '"+ now + "' AND fin >= '"+ now +"' AND idZone='"+getIdZone()+"' AND idEvenement='"+getEvenement().getIdEvenement()+"'");
+        Promotion[] promotions = promotion.getData(getPostgreSQL(), null);
+        return (promotions.length <= 0) ? null : promotions[0];
     }
 }

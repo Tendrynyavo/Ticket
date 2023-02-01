@@ -1,19 +1,22 @@
 package payement;
 
 import java.sql.Date;
-
 import connection.BddObject;
+import connection.ForeignKey;
 import event.Evenement;
 import zone.Zone;
+import java.sql.Timestamp;
 
 public class Promotion extends BddObject<Promotion> {
 
 /// FIELD
     String idPromotion;
-    Date debut;
-    Date fin;
+    Timestamp debut;
+    Timestamp fin;
     double pourcentage;
+    @ForeignKey(column = "idZone", typeColumn = String.class)
     Zone zone;
+    @ForeignKey(column = "idEvenement", typeColumn = String.class)
     Evenement evenement;
 
 /// SETTERS
@@ -26,10 +29,10 @@ public class Promotion extends BddObject<Promotion> {
     public void setIdPromotion(String idPromotion) {
         this.idPromotion = idPromotion;
     }
-    public void setDebut(Date debut) {
+    public void setDebut(Timestamp debut) {
         this.debut = debut;
     }
-    public void setFin(Date fin) {
+    public void setFin(Timestamp fin) {
         this.fin = fin;
     }
     public void setPourcentage(double pourcentage) throws Exception {
@@ -47,13 +50,35 @@ public class Promotion extends BddObject<Promotion> {
     public String getIdPromotion() {
         return idPromotion;
     }
-    public Date getDebut() {
+    public Timestamp getDebut() {
         return debut;
     }
-    public Date getFin() {
+    public Timestamp getFin() {
         return fin;
     }
     public double getPourcentage() {
         return pourcentage;
+    }
+
+/// CONSTRUCTORS
+    public Promotion() {
+        setTable("promotion");
+        setPrefix("PRO");
+        setCountPK(7);
+        setFunctionPK("nextval('seqpromotion')");
+    }
+
+    public Promotion(String debut, String fin, String pourcentage, String idZone, String idEvenement) throws Exception {
+        this();
+        setIdPromotion(buildPrimaryKey(getPostgreSQL()));
+        setDebut(Timestamp.valueOf(debut));
+        setFin(Timestamp.valueOf(fin));
+        setPourcentage(Double.parseDouble(pourcentage));
+        Zone zone = new Zone();
+        zone.setIdZone(idZone);
+        setZone(zone);
+        Evenement evenement = new Evenement();
+        evenement.setIdEvenement(idEvenement);
+        setEvenement(evenement);
     }
 }

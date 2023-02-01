@@ -1,10 +1,10 @@
 package client;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-
 import connection.BddObject;
 import event.Evenement;
+import payement.Payement;
 import place.Place;
 import reservation.Reservation;
 
@@ -79,11 +79,32 @@ public class Client extends BddObject<Client> {
         reservation.insert();
     }
 
+    public void reserverSimple(String nombre) throws Exception {
+        Connection connection = null;
+        try {
+            connection = BddObject.getPostgreSQL();
+            Reservation reservation = new Reservation(this, getEvenement());
+            reservation.insert(connection);
+            int value = Integer.parseInt(nombre);
+            int difference = getEvenement().getDifference();
+            if (difference < value) throw new Exception("Les places sont épuisées, il en reste " + difference + " de place");
+            Payement payement = new Payement(reservation, this, getEvenement(), value, true);
+            payement.insert(connection);
+            connection.commit();
+        } catch (Exception e) {
+            if (connection != null) connection.rollback();
+            throw e;
+        } finally {
+            if (connection != null) connection.close();
+        }
+    }
+
     public void chargerReservations() throws Exception {
         Reservation reservation = new Reservation();
         reservation.setTable("reservation_restant");
         reservation.setClient(this);
-        Reservation[] reservations = reservation.getData(getPostgreSQL(), null, "client");
+        reservation.setEvenement(getEvenement());
+        Reservation[] reservations = reservation.getData(getPostgreSQL(), null, "client", "evenement");
         setReservations(reservations);
     }
 

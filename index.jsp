@@ -29,13 +29,13 @@
                     <option value="<%=client.getIdClient() %>"><%=client.getNom() %></option>
                     <% } %>
                 </select>
-            </div>
-            <div class="mt-4">    
-                <select class="form-select" name="event">
-                    <% for (Evenement event : events) { %>
-                    <option value="<%=event.getIdEvenement() %>"><%=event.getNom() %></option>
+                <select class="form-select mt-3" name="event">
+                    <% for (Evenement evenement : events) { %>
+                    <option value="<%=evenement.getIdEvenement() %>"><%=evenement.getNom() %></option>
                     <% } %>
                 </select>
+            </div>
+            <div class="mt-4">   
             </div>
             <input type="submit" value="Ok" class="btn btn-outline-warning mt-3 px-5">
         </form>

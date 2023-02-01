@@ -2,6 +2,7 @@ package main;
 
 import client.Client;
 import event.Evenement;
+import payement.Promotion;
 import place.Place;
 import place.Placement;
 import reservation.Reservation;
@@ -39,7 +40,10 @@ public class Main {
         // } else {
         //     System.out.println("Timestamp 1 is greater than Timestamp 2.");
         // }
-        Reservation reservation = Reservation.getReservationById("RES0002");
-        reservation.confirme();
+        Client[] clients = Client.getAllClients();
+        Evenement evenement = Evenement.getEventById("EVE0004");
+        clients[0].setEvenement(evenement);
+        Reservation[] reservations = clients[0].getReservations();
+        reservations[0].confirme();
     }
 }
